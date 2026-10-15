@@ -1,0 +1,4 @@
+# Csak a szükséges csomagok futtathatnak build-scriptet (ellátási lánc biztonság).
+allowBuilds:
+  esbuild: true
+
