@@ -29,36 +29,38 @@ Minden érték **egyetlen fájlban** (`src/app/globals.css`) él. Új szín/tér
 
 :root {
   color-scheme: light;
-  --canvas:        oklch(0.985 0.004 85);   /* papír – meleg, nem hófehér */
-  --surface:       oklch(1     0     0);    /* kártya, táblázat */
-  --surface-muted: oklch(0.965 0.006 85);   /* fejlécsor, másodlagos panel */
-  --line:          oklch(0.900 0.008 85);   /* elválasztó vonal – ez adja a szerkezetet */
-  --ink:           oklch(0.250 0.012 60);   /* törzsszöveg – meleg tintához hasonló */
-  --ink-muted:     oklch(0.520 0.012 60);   /* másodlagos szöveg, címke */
-  --accent:        oklch(0.440 0.060 155);  /* mélyfenyő zöld: cselekvés, kijelölés */
-  --accent-hover:  oklch(0.390 0.060 155);
-  --on-accent:     oklch(0.990 0.010 155);
-  --info:          oklch(0.500 0.110 250);  /* kiadva */
-  --warning:       oklch(0.620 0.120 70);   /* határidő közeledik */
-  --danger:        oklch(0.520 0.160 25);   /* hiba, elveszett, törlés */
-  --success:       oklch(0.500 0.100 150);  /* sikeres mentés visszajelzése */
+  --canvas:        oklch(0.955 0.022 84);   /* nyers lenvászon – meleg, nem hófehér */
+  --surface:       oklch(0.978 0.014 84);   /* kártya, táblázat – meleg törtfehér */
+  --surface-muted: oklch(0.928 0.024 82);   /* fejlécsor, másodlagos panel */
+  --line:          oklch(0.858 0.030 80);   /* elválasztó vonal – meleg, nem szürke */
+  --ink:           oklch(0.280 0.030 55);   /* törzsszöveg – szepia tinta */
+  --ink-muted:     oklch(0.490 0.032 58);   /* másodlagos szöveg, címke */
+  --accent:        oklch(0.440 0.098 38);   /* mahagóni: cselekvés, kijelölés */
+  --accent-hover:  oklch(0.385 0.098 38);
+  --on-accent:     oklch(0.970 0.018 84);   /* meleg krém a mahagónin */
+  --info:          oklch(0.470 0.090 248);  /* kiadva */
+  --warning:       oklch(0.660 0.130 72);   /* határidő közeledik */
+  --danger:        oklch(0.500 0.170 25);   /* hiba, elveszett, törlés */
+  --success:       oklch(0.500 0.100 140);  /* sikeres mentés visszajelzése */
+  --weave:         oklch(0.5 0.03 75 / 0.06); /* szövés-textúra a háttéren */
 }
 
 .dark {
   color-scheme: dark;
-  --canvas:        oklch(0.190 0.008 60);
-  --surface:       oklch(0.230 0.009 60);
-  --surface-muted: oklch(0.270 0.010 60);
-  --line:          oklch(0.330 0.010 60);
-  --ink:           oklch(0.940 0.006 85);
-  --ink-muted:     oklch(0.720 0.010 85);
-  --accent:        oklch(0.720 0.070 155);
-  --accent-hover:  oklch(0.780 0.070 155);
-  --on-accent:     oklch(0.200 0.020 155);
-  --info:          oklch(0.720 0.100 250);
-  --warning:       oklch(0.780 0.110 70);
-  --danger:        oklch(0.700 0.150 25);
-  --success:       oklch(0.750 0.100 150);
+  --canvas:        oklch(0.215 0.014 62);   /* meleg sötét umbra – nem fekete */
+  --surface:       oklch(0.255 0.016 62);
+  --surface-muted: oklch(0.300 0.018 62);
+  --line:          oklch(0.360 0.020 62);
+  --ink:           oklch(0.935 0.016 84);
+  --ink-muted:     oklch(0.720 0.024 78);
+  --accent:        oklch(0.720 0.090 45);   /* világosított mahagóni */
+  --accent-hover:  oklch(0.780 0.090 45);
+  --on-accent:     oklch(0.220 0.030 45);
+  --info:          oklch(0.720 0.090 248);
+  --warning:       oklch(0.800 0.120 75);
+  --danger:        oklch(0.680 0.150 25);
+  --success:       oklch(0.750 0.100 140);
+  --weave:         oklch(0.85 0.02 80 / 0.05);
 }
 
 @theme inline {
@@ -82,6 +84,10 @@ Minden érték **egyetlen fájlban** (`src/app/globals.css`) él. Új szín/tér
 ```
 
 > Az értékek **kiindulási pontok** (szemre hangolandók a mintapéldányon), de a *nevek* és a *szerkezet* már most véglegesek. A hangolás így nem érinti a komponenseket.
+
+> **A paletta szándékosan meleg és egyedi.** A „vászon” alap (nyers lenvászon, nem hófehér), a **mahagóni** akcentus (barna-vörös, nem a szokásos kék/zöld) és a finom **szövés-textúra** a népi viselet anyagait idézi – így a felület nem néz ki „általánosnak”. A textúra CSS-ből készül (`repeating-linear-gradient`), és mindkét módban ugyanaz a szerkezet, csak a `--weave` szín vált.
+
+> **A márkajel** (`BrandMark`) saját SVG-rozetta (hímzésmotívum): nincs kép- vagy betűtípus-letöltés, és bármilyen méretben éles marad.
 
 ### Tipográfiai skála (6 lépcső – nem 10)
 
@@ -118,6 +124,7 @@ A ruha állapota **szöveges jelvény** (nem csak szín), mert a szín önmagáb
 | Javításra vár | „Javításra vár” | semleges, szaggatott keret | sérülés miatt nem adható ki |
 | Elveszett / selejt | „Elveszett” | `danger` | nem adható ki, és nem is kerül vissza |
 
+- **A kiadás alapesetben határozatlan idejű.** A „Kiadva” jelvény ilyenkor csak a kölcsönzőt mutatja, dátum nélkül (a felület a „határozatlan” szót írja ki). A „Lejárt” állapot **csak kitöltött határidőnél** értelmezhető – a határidő nélküli kiadás soha nem lesz lejárt.
 - **Visszajelző üzenet (toast) csak két színnel:** `success` (mentés, kiadás sikerült) és `danger` (hiba). Semmi más.
 - Az `accent` (mélyfenyő zöld) **kizárólag cselekvést** jelöl: elsődleges gomb, kijelölt menüpont, fókuszgyűrű. Nem díszítés.
 - Egy képernyőn egyszerre legfeljebb **3 szín** látszik a semleges árnyalatok mellett.

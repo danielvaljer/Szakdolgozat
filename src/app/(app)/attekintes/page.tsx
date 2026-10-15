@@ -4,8 +4,9 @@ import { Card, CardBody, CardHeader, StatCard } from "@/components/ui/card";
 import { IconPlus, IconScan, IconSwap } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DueDate } from "@/components/ui/due-date";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
-import { daysUntil, formatDate, formatNumber } from "@/lib/format";
+import { daysUntil, formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
 import { garmentStats, garments, recentLoans } from "@/lib/mock/data";
 
@@ -62,7 +63,7 @@ export default function DashboardPage() {
               </THead>
               <TBody>
                 {loans.map((loan) => {
-                  const remaining = daysUntil(loan.dueAt);
+                  const remaining = loan.dueAt ? daysUntil(loan.dueAt) : null;
                   return (
                     <Tr key={loan.id}>
                       <Td>
@@ -74,9 +75,14 @@ export default function DashboardPage() {
                         </Link>
                       </Td>
                       <Td>{loan.memberName}</Td>
-                      <Td className="tabular-nums">{formatDate(loan.dueAt)}</Td>
                       <Td>
-                        <StatusBadge status={remaining < 0 ? "overdue" : "loaned"} dueAt={loan.dueAt} />
+                        <DueDate value={loan.dueAt} />
+                      </Td>
+                      <Td>
+                        <StatusBadge
+                          status={remaining !== null && remaining < 0 ? "overdue" : "loaned"}
+                          dueAt={loan.dueAt}
+                        />
                       </Td>
                     </Tr>
                   );

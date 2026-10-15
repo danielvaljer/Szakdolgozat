@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { FormRow, Input } from "@/components/ui/field";
+import { BrandMark } from "@/components/ui/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { t } from "@/lib/i18n/hu";
 
@@ -10,9 +11,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <span className="grid size-8 place-items-center rounded-sm bg-accent text-sm font-bold text-on-accent">
-              RL
-            </span>
+            <BrandMark className="size-8" />
             <div className="leading-tight">
               <p className="text-sm font-semibold text-ink">{t.app.name}</p>
               <p className="text-xs text-ink-muted">{t.app.tagline}</p>

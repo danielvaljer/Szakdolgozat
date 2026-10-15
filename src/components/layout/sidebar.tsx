@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t } from "@/lib/i18n/hu";
+import { BrandMark } from "@/components/ui/icons";
 import { isActive, primaryNav, settingsNav, type NavItem } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
@@ -32,9 +33,7 @@ export function Sidebar() {
   return (
     <aside className="hidden border-r border-line bg-surface lg:sticky lg:top-0 lg:flex lg:h-svh lg:flex-col">
       <div className="flex h-14 items-center gap-2.5 border-b border-line px-4">
-        <span className="grid size-7 shrink-0 place-items-center rounded-sm bg-accent text-xs font-bold text-on-accent">
-          RL
-        </span>
+        <BrandMark className="size-7" />
         <div className="leading-tight">
           <p className="text-sm font-semibold text-ink">{t.app.name}</p>
           <p className="text-xs text-ink-muted">{t.app.tagline}</p>

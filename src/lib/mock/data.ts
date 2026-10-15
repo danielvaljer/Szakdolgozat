@@ -190,6 +190,8 @@ export const garments: readonly Garment[] = (() => {
 
     const status = rollStatus(random);
     const isLoaned = status === "loaned" || status === "overdue";
+    /* A kiadás alapesetben határozatlan idejű: csak a kiadottak egy részének van határideje. */
+    const openEnded = status === "loaned" && random() < 0.3;
     const dueOffset =
       status === "loaned" ? Math.floor(random() * 21) + 2 : -(Math.floor(random() * 9) + 1);
 
@@ -202,7 +204,7 @@ export const garments: readonly Garment[] = (() => {
       condition: pick(random, conditions),
       status,
       loanedTo: isLoaned ? pick(random, members).name : null,
-      dueAt: isLoaned ? isoDate(REFERENCE_DATE + dueOffset * DAY) : null,
+      dueAt: isLoaned && !openEnded ? isoDate(REFERENCE_DATE + dueOffset * DAY) : null,
       createdAt: isoDate(REFERENCE_DATE - Math.floor(10 + random() * 1200) * DAY),
       value: (Math.floor(random() * 170) + 16) * 500,
       notes: random() < 0.35 ? pick(random, noteSamples) : null,
@@ -217,13 +219,14 @@ export const loans: readonly Loan[] = garments
   .filter((garment) => garment.status === "loaned" || garment.status === "overdue")
   .map((garment, index) => {
     const member = members[index % members.length];
-    const due = garment.dueAt ?? isoDate(REFERENCE_DATE);
+    const due = garment.dueAt;
+    const dueMs = due ? new Date(`${due}T00:00:00Z`).getTime() : REFERENCE_DATE;
     return {
       id: `L-${String(index + 1).padStart(4, "0")}`,
       inventoryCode: garment.inventoryCode,
       memberId: member.id,
       memberName: garment.loanedTo ?? member.name,
-      loanedAt: isoDate(new Date(`${due}T00:00:00Z`).getTime() - 14 * DAY),
+      loanedAt: isoDate(dueMs - 14 * DAY),
       returnedAt: null,
       dueAt: due,
     };
@@ -255,9 +258,13 @@ export function garmentStats(items: readonly Garment[]): GarmentStats {
   };
 }
 
-/** A legközelebbi határidők elöl. */
+/** A legközelebbi határidők elöl; a határozatlan idejű kiadások a végén. */
 export function recentLoans(limit: number): readonly Loan[] {
-  return [...loans].sort((left, right) => left.dueAt.localeCompare(right.dueAt)).slice(0, limit);
+  return [...loans]
+    .sort((left, right) =>
+      (left.dueAt ?? "9999-12-31").localeCompare(right.dueAt ?? "9999-12-31"),
+    )
+    .slice(0, limit);
 }
 
 export function loansForGarment(inventoryCode: string): readonly Loan[] {

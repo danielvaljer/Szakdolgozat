@@ -38,6 +38,7 @@ export function GarmentFilters({ query }: { query: GarmentQuery }) {
     <form action="/ruhak" method="get" className="rounded-md border border-line bg-surface p-3">
       <input type="hidden" name="rendez" value={query.sort} />
       <input type="hidden" name="irany" value={query.direction} />
+      {query.stock ? <input type="hidden" name="keszlet" value={query.stock} /> : null}
 
       <div className="flex flex-wrap items-end gap-2">
         <div className="min-w-[220px] flex-1">

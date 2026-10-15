@@ -211,3 +211,58 @@ Szinte a teljes kód: projektkonfiguráció, design tokenek (`globals.css`), min
 - [ ] Bejelentkezés és szerepkörök bekötése (D-0002), majd a jogosultsági modul tesztjei.
 - [ ] A tokenek kontrasztjának és a mobilos nézetnek az ellenőrzése a bemutató előtt.
 
+---
+
+# 2026-10-14 – Melegebb, egyedibb paletta + két új igény a fejlesztőtől
+
+## 0. Fejléc
+
+| Mező | Érték |
+| --- | --- |
+| Dátum | 2026-10-14 |
+| Eszköz / modell | Cline (VS Code) + Claude |
+| Feladat típusa | design finomítás + két új funkció |
+| Eredmény | `typecheck` 0 hiba, 21/21 teszt (6 új), `build` sikeres |
+| Kapcsolódó | `docs/design.md`, `docs/terv.md`, `docs/dontesek.md` (D-0005) |
+
+## 1. Cél
+
+A fejlesztő visszajelzése: „lehetnének melegebb színek, nagyon világos a világos, és **egy kicsit látszik, hogy AI-val készült** – legyen egyedibb.” Ehhez kapcsolódva két új üzleti igény is érkezett.
+
+## 2. Az új igények (emberi döntések)
+
+1. **A kiadási határidő alapesetben határozatlan.** → a `due_at` null-t is tárolhat; a „Lejárt” állapot csak kitöltött határidőnél értelmezhető.
+2. **Gyorsan lehessen keresni a raktárban lévő és a kiadott ruhák között.** → gyors szűrő a lista tetején, **darabszámmal**, egy kattintással. A „Kiadva” csoportba a lejárt ruha is beletartozik (ez az én javaslatom volt, a fejlesztő elfogadta).
+
+## 3. Az AI szerepe és a módosítások
+
+| # | Mit adott az AI | Amit a fejlesztő tett vele | Megjegyzés |
+| --- | --- | --- | --- |
+| 1 | Első paletta: szinte fehér „papír” (oklch 0.985), zöld akcentus | Elutasította: „nagyon világos, és látszik, hogy AI-val készült” | A zöld/kék akcentus és a hófehér háttér a „generikus szoftver” benyomást adja |
+| 2 | Második paletta: meleg vászon (0.955), **mahagóni** akcentus, meleg sötét umbra sötét módban | Elfogadta | A világos mód érezhetően melegebb, a sötét mód nem fekete |
+| 3 | Finom **szövés-textúra** CSS-ből (nem kép!) és **saját SVG-rozetta** márkajel | Elfogadta | Ez adja az egyedi jelleget, letöltés nélkül |
+| 4 | A készlet-szűrő logikája (`keszlet` URL-paraméter, darabszámok a többi szűrő figyelembevételével) | Elfogadta | A számok a *másik* csoport méretét is mutatják – így nem kell átkattintani |
+| 5 | A határozatlan határidő kezelése (`DueDate` komponens, jelvény-logika, mintaadat) | Elfogadta | A határidő nélküli kiadás soha nem lesz „lejárt” |
+
+## 4. Hol hibázott az eszköz (és mi a tanulság)
+
+| # | Történés | Tanulság |
+| --- | --- | --- |
+| 1 | A mintapéldányon a fejlesztő dev szervere futott, és a **build ellenőrzés összeakadt vele** („Terminate batch job…”) | Az ellenőrző parancsok előtt meg kell nézni, hogy fut-e fejlesztői szerver; a buildet nem szabad a dev szerverrel azonos terminálban indítani. A portot ezután minden build előtt ellenőriztem. |
+| 2 | A szerkesztés közben a dev szerver átmeneti hibákat mutatott (hiányzó import, `null.localeCompare`) | A hot-reload közbeni állapot **nem bizonyíték** semmire: a hibát csak akkor szabad valósnak tekinteni, ha a `typecheck` és a teszt is jelzi. A két összetartozó szerkesztést egy menetben kell elvégezni, nem kettébontva. |
+| 3 | A szövés-textúra első ötlete kép lett volna | Kép helyett CSS-minta: nulla letöltés, mindkét témában vezérelhető (`--weave`), és nem avul el. |
+
+## 5. Hogyan ellenőriztem
+
+- `npx tsc --noEmit` → kilépési kód **0**.
+- `npx vitest run` → **21/21 zöld**; ebből 6 új teszt: a készlet-szűrő szétválasztja a raktárat és a kiadottakat, a lejárt a kiadottak közé tartozik, a darabszámok a többi szűrőt is figyelik, a készlet bekerül az URL-be, az érvénytelen érték nem, a határidő nélküli ruha rendezésnél a végére kerül.
+- A 3000-es port ellenőrzése **után** `pnpm build` → „Compiled successfully”.
+- **Amit nem tudtam ellenőrizni:** hogy a meleg paletta tényleg jól néz-e ki – ez emberi szem döntése; a kontraszt (AA) mérése is a fejlesztőre marad.
+
+## 6. Következő lépések
+
+- [ ] ESLint + CI beállítása.
+- [ ] Adatmodell és migrációk (a határozatlan határidő mostantól a séma követelménye: `due_at` null megengedett).
+- [ ] A kontraszt ellenőrzése és a szín hangolása a bemutató előtt (a tokenek neve nem változik).
+
+

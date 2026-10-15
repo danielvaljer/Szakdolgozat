@@ -10,9 +10,12 @@ export const PER_PAGE_OPTIONS = [25, 50, 100] as const;
 
 export type SortKey = "code" | "type" | "created" | "due";
 export type SortDir = "asc" | "desc";
+/** Gyors szűrő: hol van a ruha – a raktárban vagy kiadva. */
+export type StockFilter = "" | "raktar" | "kiadva";
 
 export interface GarmentQuery {
   search: string;
+  stock: StockFilter;
   typeCode: string;
   regionSlug: string;
   size: string;
@@ -26,6 +29,7 @@ export interface GarmentQuery {
 
 export const defaultGarmentQuery: GarmentQuery = {
   search: "",
+  stock: "",
   typeCode: "",
   regionSlug: "",
   size: "",
@@ -53,8 +57,10 @@ export function parseGarmentQuery(params: RawSearchParams): GarmentQuery {
   const pageRaw = Number.parseInt(single(params.oldal), 10);
   const perPageRaw = Number.parseInt(single(params.sor), 10);
 
+  const stockRaw = single(params.keszlet);
   return {
     search: single(params.q).trim(),
+    stock: stockRaw === "raktar" || stockRaw === "kiadva" ? stockRaw : "",
     typeCode: single(params.tipus),
     regionSlug: single(params.tajegyseg),
     size: single(params.meret),
@@ -83,6 +89,7 @@ export function fold(value: string): string {
 export function hasActiveFilters(query: GarmentQuery): boolean {
   return Boolean(
     query.search ||
+      query.stock ||
       query.typeCode ||
       query.regionSlug ||
       query.size ||
@@ -119,6 +126,10 @@ export function filterGarments(
     if (query.size && item.size !== query.size) return false;
     if (query.condition && item.condition !== query.condition) return false;
     if (query.status && item.status !== query.status) return false;
+    if (query.stock === "raktar" && item.status !== "available") return false;
+    if (query.stock === "kiadva" && item.status !== "loaned" && item.status !== "overdue") {
+      return false;
+    }
 
     if (needle) {
       const haystack = fold(
@@ -195,6 +206,7 @@ export function buildQueryString(query: GarmentQuery, patch: Partial<GarmentQuer
   if (merged.size) params.set("meret", merged.size);
   if (merged.condition) params.set("allapot", merged.condition);
   if (merged.status) params.set("statusz", merged.status);
+  if (merged.stock) params.set("keszlet", merged.stock);
   if (merged.sort !== defaultGarmentQuery.sort) params.set("rendez", merged.sort);
   if (merged.direction !== defaultGarmentQuery.direction) params.set("irany", merged.direction);
   if (merged.page > 1) params.set("oldal", String(merged.page));
@@ -202,4 +214,29 @@ export function buildQueryString(query: GarmentQuery, patch: Partial<GarmentQuer
 
   const value = params.toString();
   return value ? `?${value}` : "";
+}
+
+export interface StockCounts {
+  all: number;
+  inStock: number;
+  out: number;
+}
+
+/**
+ * A gyors szűrő számai: a többi szűrőt (keresés, típus, tájegység, méret, állapot)
+ * figyelembe veszi, de a készlet-szűrőt nem – így a felhasználó látja,
+ * mennyi ruha van a másik csoportban.
+ */
+export function stockCounts(
+  items: readonly Garment[],
+  query: GarmentQuery,
+  context: SearchContext = emptySearchContext,
+): StockCounts {
+  const base = filterGarments(items, { ...query, stock: "", status: "" }, context);
+
+  return {
+    all: base.length,
+    inStock: base.filter((item) => item.status === "available").length,
+    out: base.filter((item) => item.status === "loaned" || item.status === "overdue").length,
+  };
 }

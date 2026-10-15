@@ -5,6 +5,7 @@ import { buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DueDate } from "@/components/ui/due-date";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatDate } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
@@ -86,7 +87,9 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                     <Td>
                       {garmentTypeName(garment.typeCode)} · {regionName(garment.regionSlug)}
                     </Td>
-                    <Td className="tabular-nums text-ink-muted">{formatDate(garment.dueAt)}</Td>
+                    <Td className="text-ink-muted">
+                      <DueDate value={garment.dueAt} />
+                    </Td>
                     <Td>
                       <StatusBadge status={garment.status} dueAt={garment.dueAt} />
                     </Td>

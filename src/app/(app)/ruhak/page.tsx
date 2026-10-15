@@ -2,6 +2,7 @@ import Link from "next/link";
 import { GarmentFilters } from "@/components/ruhak/garment-filters";
 import { GarmentTable } from "@/components/ruhak/garment-table";
 import { PaginationBar } from "@/components/ruhak/pagination-bar";
+import { QuickFilter } from "@/components/ruhak/quick-filter";
 import { buttonClass } from "@/components/ui/button";
 import { IconPlus } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";
@@ -13,6 +14,7 @@ import {
   paginate,
   parseGarmentQuery,
   sortGarments,
+  stockCounts,
   type RawSearchParams,
 } from "@/lib/query";
 
@@ -26,9 +28,11 @@ export default async function GarmentsPage({
   searchParams: Promise<RawSearchParams>;
 }) {
   const query = parseGarmentQuery(await searchParams);
-  const filtered = filterGarments(garments, query, { typeName: garmentTypeName, regionName });
+  const context = { typeName: garmentTypeName, regionName };
+  const filtered = filterGarments(garments, query, context);
   const sorted = sortGarments(filtered, query.sort, query.direction);
   const result = paginate(sorted, query.page, query.perPage);
+  const counts = stockCounts(garments, query, context);
 
   return (
     <>
@@ -42,6 +46,8 @@ export default async function GarmentsPage({
           </Link>
         }
       />
+
+      <QuickFilter query={query} counts={counts} />
 
       <GarmentFilters query={query} />
 

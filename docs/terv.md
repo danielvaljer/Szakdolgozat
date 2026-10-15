@@ -125,6 +125,7 @@ Elv: **a lista állapota az URL-ben van**, nem a komponensben.
 | `meret` | méret | típusonkénti lista |
 | `allapot` | ruha állapota | `jo`, `viselt`, `javitasra_var` |
 | `statusz` | kölcsönzési állapot | `kiadhato`, `kiadva`, `lejart` |
+| `keszlet` | gyors szűrő: hol van a ruha | `raktar` (kiadható), `kiadva` (kiadva **vagy** lejárt) |
 | `tag` | tag azonosítója | a nála lévő ruhák szűrése |
 | `oldal` | lapszám | 1-től |
 | `sor` | lapméret | 25 / 50 / 100 |
@@ -146,6 +147,7 @@ Példa: `/ruhak?tipus=ing&statusz=kiadva&rendez=hatarido&irany=csokkeno&q=paloc`
 
 Ez a „kész-definíció” a felületre. Egy listaoldal addig nem kész, amíg mindegyik pont megvan:
 
+- **gyors szűrő a lista tetején**: Mind / Raktárban / Kiadva, darabszámmal – egy kattintás, linkkel (nem kell a szűrősávval bajlódni),
 - kereső (késleltetéssel) és törlés gomb,
 - legfeljebb 4 szűrő egy sorban + „több szűrő”,
 - találati darabszám, rendezés, lapméret,
@@ -169,7 +171,7 @@ Ezekre az egyesülettől kell válasz, és egyben a januári használhatósági 
 
 1. Ki használja a rendszert telefonon? (ez dönti el a mobil nézet prioritását)
 2. Bejelentkeznek-e a tagok, vagy ők csak kölcsönzők, akiket a leltáros rögzít?
-3. Kötelező-e a kiadási határidő, vagy csak az esemény dátumát rögzítjük?
+3. ~~Kötelező-e a kiadási határidő, vagy csak az esemény dátumát rögzítjük?~~ → **Válasz (2026-10-14.): a kiadás alapesetben határozatlan idejű**, a határidő megadása lehetőség. Ezért a `due_at` mező null-t is tárolhat, és a „lejárt” állapot csak kitöltött határidőnél értelmezhető.
 4. Egyszerre hány ruhát visznek el egy tag? (a kiadási folyamat ehhez igazodik)
 5. Van-e olyan darab, ami nem adható ki (bemutató, kiállítási darab)?
 6. Ki lesz az adminisztrátor a gyakorlatban, és hány fő?

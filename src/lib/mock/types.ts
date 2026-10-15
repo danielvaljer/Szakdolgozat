@@ -51,5 +51,6 @@ export interface Loan {
   memberName: string;
   loanedAt: string;
   returnedAt: string | null;
-  dueAt: string;
+  /** Határozatlan lehet: a kiadás alapesetben nem jár le. */
+  dueAt: string | null;
 }

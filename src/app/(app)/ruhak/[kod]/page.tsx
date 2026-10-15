@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { ConditionBadge, StatusBadge } from "@/components/ui/status-badge";
+import { DueDate } from "@/components/ui/due-date";
 import { PageHeader } from "@/components/ui/page-header";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -111,7 +112,7 @@ export default async function GarmentDetailPage({
                 </p>
                 <p className="mt-1 text-base font-semibold text-ink">{garment.loanedTo}</p>
                 <p className="text-sm text-ink-muted">
-                  {t.columns.due}: {formatDate(garment.dueAt)}
+                  {t.columns.due}: <DueDate value={garment.dueAt} />
                 </p>
               </CardBody>
             </Card>

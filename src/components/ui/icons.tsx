@@ -1,4 +1,5 @@
 import type { ReactNode, SVGProps } from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * Saját, kézzel írt ikonkészlet.
@@ -7,6 +8,27 @@ import type { ReactNode, SVGProps } from "react";
  */
 
 type IconProps = SVGProps<SVGSVGElement>;
+
+/**
+ * Márkajel: szövött rozetta (népi hímzésmotívum) – ez adja a felület saját arcát,
+ * és nem igényel külső képet vagy letöltött betűtípusjelet.
+ */
+export function BrandMark({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn("grid shrink-0 place-items-center rounded-sm bg-accent", className)}
+      aria-hidden="true"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" strokeWidth={1.7}>
+        <circle cx="12" cy="12" r="2" fill="var(--on-accent)" stroke="none" />
+        <ellipse cx="12" cy="6.4" rx="1.9" ry="3.2" />
+        <ellipse cx="12" cy="17.6" rx="1.9" ry="3.2" />
+        <ellipse cx="6.4" cy="12" rx="3.2" ry="1.9" />
+        <ellipse cx="17.6" cy="12" rx="3.2" ry="1.9" />
+      </svg>
+    </span>
+  );
+}
 
 function Icon({ children, ...props }: IconProps & { children: ReactNode }) {
   return (

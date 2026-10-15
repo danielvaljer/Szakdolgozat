@@ -35,6 +35,7 @@ export const t = {
     next: "Következő",
     previous: "Előző",
     rowsPerPage: "Sorok",
+    openEnded: "határozatlan",
     empty: "Nincs találat a szűrésre.",
     emptyAction: "Szűrők törlése",
     loading: "Betöltés…",
@@ -101,6 +102,10 @@ export const t = {
     imageHint: "A fotó feltöltésekor a rendszer típusjavaslatot ad – a javaslatot jóvá kell hagyni.",
     autoCodeHint: "Automatikus azonosító",
     suggestType: "Javasolt típus (minta)",
+    stockFilter: "Hol van a ruha",
+    stockAll: "Mind",
+    inStock: "Raktárban",
+    outOfStock: "Kiadva",
     acceptSuggestion: "Elfogadom",
   },
   members: {

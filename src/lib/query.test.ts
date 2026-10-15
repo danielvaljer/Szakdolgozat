@@ -8,6 +8,7 @@ import {
   paginate,
   parseGarmentQuery,
   sortGarments,
+  stockCounts,
 } from "./query";
 
 /**
@@ -160,5 +161,50 @@ describe("buildQueryString", () => {
   it("csak a megadott értékeket tartalmazza", () => {
     const value = buildQueryString(defaultGarmentQuery, { search: "ing", status: "loaned", page: 2 });
     expect(value).toBe("?q=ing&statusz=loaned&oldal=2");
+  });
+});
+
+describe("készlet szerinti gyors szűrés", () => {
+  it("szétválasztja a raktárban lévő és a kiadott ruhákat", () => {
+    expect(filterGarments(sample, { ...defaultGarmentQuery, stock: "raktar" })).toHaveLength(2);
+
+    const out = filterGarments(sample, { ...defaultGarmentQuery, stock: "kiadva" });
+    expect(out.map((row) => row.inventoryCode)).toEqual(["MEL-0002", "SZO-0003"]);
+  });
+
+  it("a kiadottak közé a lejárt ruha is beletartozik", () => {
+    const out = filterGarments(sample, { ...defaultGarmentQuery, stock: "kiadva" });
+    expect(out.some((row) => row.status === "overdue")).toBe(true);
+  });
+
+  it("a darabszámok a többi szűrőt is figyelembe veszik", () => {
+    expect(stockCounts(sample, defaultGarmentQuery)).toEqual({ all: 4, inStock: 2, out: 2 });
+
+    const onlySkirt = stockCounts(sample, { ...defaultGarmentQuery, typeCode: "SZO" });
+    expect(onlySkirt).toEqual({ all: 1, inStock: 0, out: 1 });
+  });
+
+  it("a készlet-szűrő bekerül az URL-be, és az érvénytelen érték nem", () => {
+    expect(buildQueryString(defaultGarmentQuery, { stock: "kiadva" })).toBe("?keszlet=kiadva");
+    expect(parseGarmentQuery({ keszlet: "mind" }).stock).toBe("");
+  });
+});
+
+describe("határozatlan kiadási határidő", () => {
+  const rows = [
+    garment({ inventoryCode: "A-1", status: "loaned", dueAt: null }),
+    garment({ inventoryCode: "B-2", status: "loaned", dueAt: "2026-11-01" }),
+  ];
+
+  it("rendezésnél a határidő nélküli ruha kerül a végére", () => {
+    expect(sortGarments(rows, "due", "asc").map((row) => row.inventoryCode)).toEqual([
+      "B-2",
+      "A-1",
+    ]);
+  });
+
+  it("a határidő nélküli kiadás is a kiadottak között van", () => {
+    const out = filterGarments(rows, { ...defaultGarmentQuery, stock: "kiadva" });
+    expect(out).toHaveLength(2);
   });
 });
