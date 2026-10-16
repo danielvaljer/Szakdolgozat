@@ -67,7 +67,7 @@ Node.js **24 LTS** · `pnpm` · **Next.js 16** (App Router) · **React 19** · *
 2. Ha van érintett dokumentum, **előbb** azt frissítjük (döntés → dokumentum → kód).
 3. Implementáció + teszt együtt.
 4. Futtatás: `pnpm lint`, `pnpm typecheck`, `pnpm test`.
-5. Dokumentáció, `CHANGELOG.md`, **AI Log** bejegyzés.
+5. Dokumentáció és **AI Log** bejegyzés – a változások listája maga a commit üzenet.
 6. Commit a 11. pont (kész-definíció) ellenőrző listája szerint.
 
 ## 9. Commit minta (Conventional Commits)
@@ -107,7 +107,7 @@ Egy feladat akkor kész, ha az alábbi mind teljesül. Ez a lista rövid szánd�
 
 **Funkció:** jogosultság-ellenőrzés a szerveren is; írás a naplózó burkolón át; üres, betöltő és hibaállapot magyarul; megerősítés romboló műveletnél; reszponzív; világos és sötét módban is helyes.
 
-**Dokumentáció:** az érintett dokumentum frissült (12. pont); döntésnél `docs/dontesek.md`; `CHANGELOG.md` sor; `docs/ai-log.md` bejegyzés, ha AI segített – eszközzel, módosításokkal és **ellenőrzéssel** együtt.
+**Dokumentáció:** az érintett dokumentum frissült (12. pont); döntésnél `docs/dontesek.md`; `docs/ai-log.md` bejegyzés, ha AI segített – eszközzel, módosításokkal és **ellenőrzéssel** együtt.
 
 **Mérföldkőnél:** a hónap céljai kipipálva; konzultációra működő állapot; konzultációs jegyzet; az ismert hiányosságok listája leírva.
 
@@ -120,10 +120,18 @@ Egy feladat akkor kész, ha az alábbi mind teljesül. Ez a lista rövid szánd�
 | Új technológia vagy függőség | `docs/dontesek.md` |
 | Új minta (pl. naplózás, hibakezelés) | `AGENTS.md` + `docs/terv.md` |
 | Bármilyen AI-asszisztált munka | `docs/ai-log.md` |
-| Bármi, ami a tervhez képest változik | `CHANGELOG.md` |
+| Bármi, ami a tervhez képest változik | commit üzenet (Conventional Commits) |
 
 ## 13. Három szabály, ami a dokumentációt rendben tartja
 
 1. **Egy tény, egy helyen.** Ha valami két dokumentumban is szerepel, az egyik helyen hivatkozás lesz belőle.
 2. **Döntés előbb dokumentumba, aztán kódba.** Ha egy döntést nem lehet három mondatban leírni, akkor még nem született meg.
 3. **Diagram Mermaid-ben, a Markdown fájlba ágyazva** – így a verziókövetés diffeli, és nem avul el csendben.
+
+## 14. Git és GitHub – kizárólag a fejlesztő kezében
+
+- **A verziókövetést a fejlesztő végzi.** Az AI-eszköz **nem** push-ol, **nem** hoz létre vagy módosít remote-ot, és nem nyúl a git beállításaihoz – akkor sem, ha a feladat része lenne.
+- **Commit (helyben) is csak kérésre:** az AI-eszköz csak akkor commitol, ha a fejlesztő erre kifejezetten engedélyt ad.
+- Az AI-eszköz git parancsot **kizárólag olvasásra** használhat (`status`, `diff`, `log`, `remote -v`) – a repó állapotának ellenőrzésére, a fejlesztő tájékoztatására.
+- A változások listája a **git-történet** (Conventional Commits üzenetekkel) – ezért nincs külön `CHANGELOG.md` fájl.
+- Ha az AI-eszköz kész egy munkával, **megmondja, mi van kész és mi nincs commitolva**, és átadja a döntést: a fejlesztő commitol és push-ol, amikor jónak látja.
