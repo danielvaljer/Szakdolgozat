@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { IconClose } from "@/components/ui/icons";
 import { t } from "@/lib/i18n/hu";
 import { isActive, mobileMoreNav, mobileNav, type NavItem } from "@/lib/nav";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/ui/cn";
 
 function BottomLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;

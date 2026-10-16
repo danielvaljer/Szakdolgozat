@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { GarmentFilters } from "@/components/ruhak/garment-filters";
-import { GarmentTable } from "@/components/ruhak/garment-table";
-import { PaginationBar } from "@/components/ruhak/pagination-bar";
-import { QuickFilter } from "@/components/ruhak/quick-filter";
+import { GarmentFilters, QuickFilter } from "@/components/ruhak/garment-filters";
+import { GarmentTable, PaginationBar } from "@/components/ruhak/garment-table";
 import { buttonClass } from "@/components/ui/button";
 import { IconPlus } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";

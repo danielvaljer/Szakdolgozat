@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { IconMonitor, IconMoon, IconSun } from "@/components/ui/icons";
 import { t } from "@/lib/i18n/hu";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/ui/cn";
 
 type Theme = "light" | "dark" | "system";
 

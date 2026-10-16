@@ -3,15 +3,25 @@
 import Link from "next/link";
 import type { ChangeEvent } from "react";
 import { buttonClass } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/field";
+import { cn } from "@/components/ui/cn";
+import { Input, Label, Select } from "@/components/ui/form";
 import { IconClose, IconSearch } from "@/components/ui/icons";
+import { formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
 import { allSizes, garmentTypes, regions } from "@/lib/mock/data";
-import { hasActiveFilters, PER_PAGE_OPTIONS, type GarmentQuery } from "@/lib/query";
+import {
+  buildQueryString,
+  hasActiveFilters,
+  PER_PAGE_OPTIONS,
+  type GarmentQuery,
+  type StockCounts,
+} from "@/lib/query";
 
 /**
- * Szűrősáv. A szűrők az URL-ben élnek, ezért ez egy egyszerű GET űrlap:
- * JavaScript nélkül is működik, JavaScripttel a legördülők azonnal alkalmazódnak.
+ * A lista TELJES szűrése egy fájlban:
+ *   1. `QuickFilter` – gyors váltás: Mind / Raktárban / Kiadva (linkekkel, egy kattintás),
+ *   2. `GarmentFilters` – a részletes szűrősáv (űrlap).
+ * Mindkettő az URL-t írja, ezért JavaScript nélkül is működik, és a link megosztható.
  * Négy szűrő látszik, a többi a „Szűrők +” panelben (design 6. pont).
  */
 export function GarmentFilters({ query }: { query: GarmentQuery }) {
@@ -148,5 +158,60 @@ export function GarmentFilters({ query }: { query: GarmentQuery }) {
         </div>
       </div>
     </form>
+  );
+}
+
+const stockOptions: readonly { value: "" | "raktar" | "kiadva"; label: string }[] = [
+  { value: "", label: t.garments.stockAll },
+  { value: "raktar", label: t.garments.inStock },
+  { value: "kiadva", label: t.garments.outOfStock },
+];
+
+/** Gyors szűrő: egyetlen kattintás a raktárban lévő és a kiadott ruhák között. */
+export function QuickFilter({ query, counts }: { query: GarmentQuery; counts: StockCounts }) {
+  function countFor(value: string): number {
+    if (value === "raktar") return counts.inStock;
+    if (value === "kiadva") return counts.out;
+    return counts.all;
+  }
+
+  return (
+    <div className="mb-3 flex flex-wrap items-center gap-2">
+      <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
+        {t.garments.stockFilter}
+      </span>
+      <div
+        className="inline-flex rounded-sm border border-line bg-surface p-0.5"
+        role="group"
+        aria-label={t.garments.stockFilter}
+      >
+        {stockOptions.map((option) => {
+          const active = query.stock === option.value;
+          return (
+            <Link
+              key={option.value || "mind"}
+              href={`/ruhak${buildQueryString(query, { stock: option.value, page: 1 })}`}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 text-sm transition-colors",
+                active
+                  ? "bg-accent text-on-accent"
+                  : "text-ink-muted hover:bg-surface-muted hover:text-ink",
+              )}
+            >
+              {option.label}
+              <span
+                className={cn(
+                  "text-xs tabular-nums",
+                  active ? "text-on-accent/80" : "text-ink-muted",
+                )}
+              >
+                {formatNumber(countFor(option.value))}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 }

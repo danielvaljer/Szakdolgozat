@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { FormRow, Input } from "@/components/ui/field";
+import { FormRow, Input } from "@/components/ui/form";
 import { BrandMark } from "@/components/ui/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { t } from "@/lib/i18n/hu";

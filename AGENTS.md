@@ -31,6 +31,8 @@ Node.js **24 LTS** · `pnpm` · **Next.js 16** (App Router) · **React 19** · *
 | Tiszta segédfüggvények | `src/lib/**` | Validáció, azonosító-generálás, dátum-, pénz- és szövegformázás. **Kötelezően tesztelt**, mellékhatás nélkül. |
 | Megjelenítő komponensek | `src/components/**` | Csak megjelenítés; üzleti döntés nem lehet benne. |
 
+> **Megjegyzés:** a `src/server/**` réteg az adatbázis bekötésével együtt készül el (október vége). Addig az üzleti logika a `src/lib/**`-ben van – keretrendszertől független, tesztelt tiszta függvények formájában (pl. `lib/query.ts`).
+
 ## 5. Elnevezési szabályok
 
 - Adatbázis táblák: `snake_case`, többes szám (`garments`, `loans`, `activity_log`); oszlopok is `snake_case`.

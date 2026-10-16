@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/badge";
 import { DueDate } from "@/components/ui/due-date";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatDate } from "@/lib/format";

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/ui/cn";
 
 /** Táblázat-elemek egy helyen: minden lista ugyanúgy néz ki. */
 export function Table({ className, children }: { className?: string; children: ReactNode }) {

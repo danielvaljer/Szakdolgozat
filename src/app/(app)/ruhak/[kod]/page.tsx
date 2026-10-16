@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { ConditionBadge, StatusBadge } from "@/components/ui/status-badge";
+import { ConditionBadge, StatusBadge } from "@/components/ui/badge";
 import { DueDate } from "@/components/ui/due-date";
 import { PageHeader } from "@/components/ui/page-header";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";

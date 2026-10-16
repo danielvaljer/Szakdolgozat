@@ -3,7 +3,7 @@ import { buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, StatCard } from "@/components/ui/card";
 import { IconPlus, IconScan, IconSwap } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { StatusBadge } from "@/components/ui/badge";
 import { DueDate } from "@/components/ui/due-date";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { daysUntil, formatNumber } from "@/lib/format";

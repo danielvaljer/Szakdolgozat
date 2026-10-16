@@ -5,15 +5,14 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
+import { cn } from "@/components/ui/cn";
 import { IconChevronDown } from "@/components/ui/icons";
-import { cn } from "@/lib/utils";
 
 /**
- * Űrlap-elemek egy fájlban, mert mindig együtt használjuk őket.
+ * Űrlap-elemek EGY fájlban, mert mindig együtt használjuk őket.
  * Natív elemek maradnak (nincs saját lenyíló, nincs saját dátumválasztó):
  * mobilon a rendszer saját választója jelenik meg, és JavaScript nélkül is működik.
  */
-
 const controlClass =
   "w-full rounded-sm border border-line bg-surface px-3 text-sm text-ink placeholder:text-ink-muted/70 disabled:opacity-60";
 
@@ -28,10 +27,7 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
 export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <div className="relative">
-      <select
-        className={cn(controlClass, "h-11 appearance-none pr-9 lg:h-9", className)}
-        {...props}
-      >
+      <select className={cn(controlClass, "h-11 appearance-none pr-9 lg:h-9", className)} {...props}>
         {children}
       </select>
       <IconChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-muted" />

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button, buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { FormRow, Input, Select, Textarea } from "@/components/ui/field";
+import { FormRow, Input, Select, Textarea } from "@/components/ui/form";
 import { PageHeader } from "@/components/ui/page-header";
 import { t } from "@/lib/i18n/hu";
 import { allSizes, findGarment, garmentTypeName, garmentTypes, regions } from "@/lib/mock/data";

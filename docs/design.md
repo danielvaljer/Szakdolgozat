@@ -142,6 +142,7 @@ A ruha állapota **szöveges jelvény** (nem csak szín), mert a szín önmagáb
 | `Table`, `THead`, `Td`… | táblázat-elemek egy helyen (minden lista ugyanúgy néz ki) | ✅ kész |
 | `GarmentTable` | a ruha-lista: asztalon sűrű táblázat, mobilon két soros sűrű sor | ✅ kész |
 | `GarmentFilters` | keresés + 4 szűrő + „Szűrők +” panel; az URL-t írja | ✅ kész |
+| `QuickFilter` | gyors váltás: Mind / Raktárban / Kiadva, darabszámmal | ✅ kész |
 | `PaginationBar` | lapozás, találati darabszám | ✅ kész |
 | `StatusBadge`, `ConditionBadge` | az állapot jelvénye – egy helyen a szín- és szöveglogika | ✅ kész |
 | `EmptyState` | üres lista: egy mondat + a helyes következő lépés | ✅ kész |
@@ -155,7 +156,7 @@ A ruha állapota **szöveges jelvény** (nem csak szín), mert a szín önmagáb
 
 **Gombok:** `primary` (accent), `secondary` (semleges felület + vonal), `ghost` (csak szöveg), `danger` (csak visszavonhatatlan műveletre). Két méret: `md` (36 / 44 px) és `sm` (32 px, táblázatsorban). **Nincs hatodik variáns.**
 
-**Szabály új komponensre:** külön komponens csak akkor készül, ha **legalább két helyen** kell; addig helyben marad. Egy komponens egy fájl, ~150 sor alatt – ha hosszabb, bontani kell.
+**Szabály új komponensre:** külön komponens csak akkor készül, ha **legalább két helyen** kell; addig helyben marad. **Egy fájl = egy fogalom:** a szorosan összetartozó kis komponensek egy fájlban vannak (minden jelvény a `ui/badge.tsx`-ben, minden űrlapelem a `ui/form.tsx`-ben, a lista teljes szűrése a `garment-filters.tsx`-ben). Egy fájl maradjon ~200 sor alatt – ha hosszabb, bontani kell.
 
 ## 4. Elrendezés és reszponzivitás
 

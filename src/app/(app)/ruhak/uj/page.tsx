@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { FormRow, Input, Select, Textarea } from "@/components/ui/field";
+import { FormRow, Input, Select, Textarea } from "@/components/ui/form";
 import { IconPlus } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";
 import { t } from "@/lib/i18n/hu";

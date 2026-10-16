@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/ui/cn";
 
 /** Panel. Egy fajta kártya létezik, egy fajta sugárral és vonallal (nincs árnyék). */
 export function Card({ className, children }: { className?: string; children: ReactNode }) {

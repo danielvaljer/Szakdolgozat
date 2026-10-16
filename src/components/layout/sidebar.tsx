@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { t } from "@/lib/i18n/hu";
 import { BrandMark } from "@/components/ui/icons";
 import { isActive, primaryNav, settingsNav, type NavItem } from "@/lib/nav";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/ui/cn";
 
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;

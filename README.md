@@ -11,6 +11,7 @@ Néptáncegyesületi ruhakészlet nyilvántartása és kölcsönzése: ruhák, t
 | --- | --- |
 | Mi ez, hogyan indul, hol mi van? | ez a fájl |
 | Hogyan dolgozunk, mi tilos, mikor kész egy feladat? | `AGENTS.md` |
+| **Hol van mi a kódban?** (hova nyúlj, ha…) | `src/README.md` |
 | **Mit** építünk? (követelmények, képernyők, adatmodell) | `docs/terv.md` |
 | **Hogyan** néz ki? (design rendszer) | `docs/design.md` |
 | **Miért** így? (döntések indoklással) | `docs/dontesek.md` |

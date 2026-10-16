@@ -265,4 +265,59 @@ A fejlesztő visszajelzése: „lehetnének melegebb színek, nagyon világos a 
 - [ ] Adatmodell és migrációk (a határozatlan határidő mostantól a séma követelménye: `due_at` null megengedett).
 - [ ] A kontraszt ellenőrzése és a szín hangolása a bemutató előtt (a tokenek neve nem változik).
 
+---
+
+# 2026-10-14 – Kódrendezés az átláthatóságért + kód-térkép kezdőknek
+
+## 0. Fejléc
+
+| Mező | Érték |
+| --- | --- |
+| Dátum | 2026-10-14 |
+| Eszköz / modell | Cline (VS Code) + Claude |
+| Feladat típusa | refaktor + dokumentáció |
+| Eredmény | `typecheck` 0 hiba, **21/21 teszt**, `build` sikeres, 8 útvonal 200; 46 → 43 fájl |
+| Kapcsolódó | `src/README.md` (új), `AGENTS.md`, `docs/design.md`, `README.md` |
+
+## 1. Cél
+
+A fejlesztő visszajelzése: „összeszervezettebb kód kellene az átláthatóság miatt; sok dolog szét van szedve, ami nem baj, de **nem vagyok jártas TypeScriptben és Reactben**". Vagyis nem a fájlszám a baj, hanem hogy **nem lehet tudni, hova kell nyúlni**, és néhány fájlnév talányos.
+
+## 2. Amit átalakítottam (viselkedés nem változott)
+
+| # | Előtte | Utána | Miért |
+| --- | --- | --- | --- |
+| 1 | `lib/utils.ts` (3 sor) | `components/ui/cn.ts` | Az `utils` a legbeszédesebb név a világon; a `cn` kizárólag megjelenítési ügy, ezért a `lib`-ben sem volt jó helyen |
+| 2 | `ui/badge.tsx` + `ui/status-badge.tsx` | **egy** `ui/badge.tsx` | Két hasonló nevű fájl ugyanarra a fogalomra; most egy szín-térkép van, nem kettő |
+| 3 | `ui/field.tsx` | `ui/form.tsx` | „field" helyett „form" – egyértelmű, hogy az űrlapelemek vannak benne |
+| 4 | `ruhak/quick-filter.tsx` + `ruhak/garment-filters.tsx` | egy `garment-filters.tsx` | Mindkettő szűrés → egy helyen a lista teljes szűrése |
+| 5 | `ruhak/pagination-bar.tsx` + `ruhak/garment-table.tsx` | egy `garment-table.tsx` | A lapozás a lista megjelenítésének része → egy fájl: „a lista" |
+| 6 | Az 5 helykitöltő képernyő bulletjei a `page.tsx`-ekben | `lib/i18n/hu.ts` (szótár) | **Ez megsértette a saját szabályunkat**: felhasználói szöveg nem lehet a kódban. Most a képernyők 5 sorosak |
+| 7 | — | **ÚJ: `src/README.md`** | Kód-térkép: „hova nyúlj, ha…", a mappák szerepe, és 11 nyelvi elem magyarázata (`@/`, props, `"use client"`, `??`, `?.`, `readonly`, generikus, `as const`) |
+
+## 3. Mit nem vontam össze (és miért)
+
+- **A váz négy fájlja** (`app-shell`, `sidebar`, `topbar`, `bottom-nav`) külön maradt: összevonva az egész váz „use client" lenne, ami **több kódot küldene a telefonra**. Ez a szétválasztás nem esztétikai, hanem teljesítmény-ok.
+- **A jól elnevezett, egyfunkciós fájlok** (`page-header.tsx`, `due-date.tsx`, `table.tsx`, `card.tsx`) maradtak: ezekre a névre pontosan lehet keresni, nincs bennük rejtett párhuzam.
+
+## 4. Hogyan ellenőriztem
+
+- A mechanikus import-átírást (18 fájl: `@/lib/utils` → `@/components/ui/cn`, `status-badge` → `badge`, `field` → `form`) **szkripttel** végeztem, utána `npx tsc --noEmit` → **0 hiba** (a tsc azonnal kiszűri az elrontott importot).
+- `npx vitest run` → **21/21 zöld** (a logika változatlannak bizonyult).
+- A 3000-es port ellenőrzése **után** `pnpm build` → „Compiled successfully"; majd éles szerver + 8 útvonal (köztük mind az 5 újraírt helykitöltő) → **mind 200**; a szervert leállítottam.
+- Amit nem tudtam ellenőrizni: hogy a kód „kezdőbarát-e" – ez a fejlesztő olvasói élménye, és a `src/README.md`-t ezért bővíthetőnek szántam.
+
+## 5. Tanulság
+
+1. **Az átláthatóság nem a fájlszámtól függ.** A legnagyobb nyereség a **kód-térkép** és a **beszédes fájlnevek** voltak; az `utils.ts`, `field.tsx`, `status-badge.tsx` típusú nevek kerülnek a legtöbbe.
+2. **A saját szabály ellenőrzése is feladat:** a helykitöltő oldalak szövegei hónapokig észrevétlenül bent maradtak volna a kódban.
+3. Gépi úton (szkripttel) átírt import után **azonnal typecheck** – ez az egyetlen olcsó biztonsági háló ilyen refaktornál.
+
+## 6. Következő lépések
+
+- [ ] ESLint + CI beállítása.
+- [ ] Adatmodell + első migrációk (Drizzle), majd a `lib/mock` törlése.
+- [ ] A `src/README.md` bővítése, ha a fejlesztőnek új kérdése merül fel – ez a fájl az ő olvasói élményéért van.
+
+
 
