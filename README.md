@@ -22,6 +22,8 @@ Ha egy tény két helyen is szerepel, az **hiba**: az egyik helyen hivatkozás l
 
 ## Indítás
 
+**A leggyorsabb út:** `pnpm dev` → <http://localhost:3000> (ha a függőségek már telepítve vannak).
+
 ```bash
 pnpm install               # függőségek
 pnpm dev                   # fejlesztői szerver → http://localhost:3000
@@ -52,7 +54,3 @@ Az indoklás és a teljes függőség-tiltólista: `docs/dontesek.md` (D-0001).
 ## Konzulensi bemutatóhoz
 
 A design mérföldkő anyaga két dokumentum: `docs/terv.md` (képernyők, navigáció, adatmodell) és `docs/design.md` (design rendszer).
-
-##Elindítási útmutató
-
-parancs, ha megvan minden: `pnpm dev` (http://localhost:3000)
