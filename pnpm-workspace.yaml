@@ -1,4 +1,10 @@
 # Csak a szükséges csomagok futtathatnak build-scriptet (ellátási lánc biztonság).
+#
+# Ha a pnpm egy új csomagnál ezt írja: "Ignored build scripts: <csomag>",
+# akkor ide fel kell venni `true` értékkel – de csak akkor, ha tényleg szükséges.
+# (A pnpm ilyenkor magától beszúr egy "<csomag>: set this to true or false" sort;
+#  azt kell `true`-ra átírni, nem újat felvenni – különben duplikált kulcs lesz.)
 allowBuilds:
-  esbuild: true
+  esbuild: true          # a Vitest build-eszköze
+  unrs-resolver: true    # az ESLint TypeScript-import feloldójának natív része
 

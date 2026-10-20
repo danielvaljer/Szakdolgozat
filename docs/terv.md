@@ -2,9 +2,116 @@
 
 > **Mit építünk?** Ez a dokumentum a rendszer tartalma: képernyők, navigáció, szerepkörök – és ide kerülnek a követelmények és az adatmodell is. Ugyanez a felépítés lesz a Next.js útvonal-struktúrája.
 
-**Tartalom:** Követelmények · Adatmodell · Architektúra · **Képernyők és navigáció** (elvek, site map, útvonal-tábla, szerepkörök, navigációs váz, URL-szerződés, képernyő-leltár, átmeneti helyek) · Nyitott kérdések
+**Tartalom:** Adatmodell · Képernyők és navigáció · Nyitott kérdések · Indulási ellenőrzőlista
 
-> A **követelmények**, az **adatmodell** és az **architektúra** szakasz október végén kerül ide; addig a képernyők és a navigáció a kidolgozott rész.
+> **Kész:** az adatmodell (táblák, megkötések, indexek, azonosítóképzés, állapotgép) és a képernyők/navigáció.
+> **Következik:** a követelmények (szerepkörönkénti felhasználói történetek), az architektúra-ábra és a wireframe-ek.
+
+## Adatmodell
+
+> Az adatbázis **PostgreSQL** (Supabase), a séma verziókövetett SQL migrációkkal készül. A tábla- és oszlopnevek **angolul** vannak (a magyar megnevezés a felület dolga).
+
+### Elvek
+
+1. **Elsődleges kulcs mindig `id`** (`uuid`), idegen kulcs `<tábla_egyes_szám>_id` (pl. `garment_id`).
+2. **Minden táblán van `organization_id`** – ma egyetlen egyesület van benne, de így a több egyesület (multi-tenant) támogatása később nem igényel táblák átírását. (Ez tudatos előkészítés, nem megvalósított funkció.)
+3. **Törlés helyett deaktiválás:** `is_active boolean`. A napló és az előzmények hivatkoznak a régi sorokra, ezért nem tűnhetnek el.
+4. **Időbélyegek mindenhol:** `created_at`, `updated_at` (utóbbi triggerrel frissül).
+5. **A naplózás külön tábla** (`activity_log`), nem elszórt mezők – minden írási művelet ide kerül.
+6. **A „lejárt” állapotot nem tároljuk** – kiszámítjuk (`due_at < ma` és `returned_at` üres). Ha tárolnánk, minden éjszaka frissíteni kellene, és elavulna.
+
+### Táblák
+
+| Tábla | Mi van benne | Fontos mezők |
+| --- | --- | --- |
+| `organizations` | az egyesület (egyelőre 1 sor) | `id`, `name`, `slug` |
+| `profiles` | belépő felhasználók (Supabase Auth-hoz kapcsolva) | `id` (= auth azonosító), `organization_id`, `display_name`, `role`, `is_active` |
+| `members` | **egyesületi tagok** (nem feltétlenül van fiókjuk!) | `id`, `organization_id`, `full_name`, `email`, `phone`, `member_since`, `is_active`, `user_id` (opcionális fiók-kapcsolat) |
+| `garment_types` | ruhatípusok | `id`, `organization_id`, `code` (pl. `ING`), `name`, `sort_order`, `is_active` |
+| `regions` | tájegységek | `id`, `organization_id`, `slug`, `name`, `is_active` |
+| `garments` | ruhák | `id`, `organization_id`, `inventory_code`, `garment_type_id`, `region_id`, `size`, `color`, `condition`, `status`, `acquired_at`, `value_huf`, `notes`, `is_active` |
+| `garment_images` | ruhaképek | `id`, `garment_id`, `storage_path`, `position`, `is_primary` |
+| `loans` | kiadás–visszavétel | `id`, `organization_id`, `garment_id`, `member_id`, `loaned_at`, **`due_at` (lehet üres!)**, `returned_at`, `condition_out`, `condition_in`, `loaned_by`, `received_by`, `notes` |
+| `activity_log` | műveleti napló | `id`, `organization_id`, `actor_user_id`, `action`, `entity_type`, `entity_id`, `before` (jsonb), `after` (jsonb), `occurred_at`, `ip`, `user_agent` |
+| `code_sequences` | az egyedi azonosítók sorszáma | `organization_id`, `prefix`, `last_value` (összetett kulcs) |
+
+**Két kulcsdöntés, amit érdemes külön megérteni:**
+
+- **`members` ≠ `profiles`.** Az egyesületi tag lehet, hogy soha nem lép be a rendszerbe – ő csak egy személy a nyilvántartásban (a leltáros rögzíti). Aki viszont belép (leltáros, adminisztrátor), annak fiókja van. A kettőt a `members.user_id` köti össze, de csak ha van fiók.
+- **A ruha és a tag kapcsolata nem a ruhában van**, hanem a `loans` táblában – így megmarad a teljes előzmény (ki, mikor, meddig), nem csak az, hogy „most kinél van”.
+
+### Kapcsolatok
+
+```mermaid
+erDiagram
+  organizations ||--o{ profiles : "felhasznalok"
+  organizations ||--o{ members : "tagok"
+  organizations ||--o{ garment_types : "torzsadat"
+  organizations ||--o{ regions : "torzsadat"
+  organizations ||--o{ garments : "ruhak"
+  organizations ||--o{ loans : "kolcsonzesek"
+  organizations ||--o{ activity_log : "naplo"
+  profiles ||--o{ members : "fiok (opcionalis)"
+  garment_types ||--o{ garments : "tipusa"
+  regions ||--o{ garments : "tajegysege"
+  garments ||--o{ garment_images : "kepei"
+  garments ||--o{ loans : "kolcsonzesei"
+  members ||--o{ loans : "kolcsonzesei"
+  profiles ||--o{ loans : "kiadta_visszavette"
+  profiles ||--o{ activity_log : "muveletei"
+  code_sequences }o--|| organizations : "sorszamok"
+```
+
+### Megkötések és indexek – a helyesség és a gyorsaság garanciái
+
+A hibás állapotot **nem a felületre bízzuk**: amit az adatbázis meg tud tiltani, azt meg is tiltjuk.
+
+| Megkötés | Miért fontos |
+| --- | --- |
+| `garments.inventory_code` egyedi (szervezetenként) | nem születhet két azonos kódú ruha |
+| **részleges egyedi index:** `loans UNIQUE (garment_id) WHERE returned_at IS NULL` | egy ruhán egyszerre **egy** nyitott kölcsönzés lehet – ezt az adatbázis garantálja, nem az alkalmazás |
+| `CHECK` a `status` és `condition` mezőn | csak a megengedett értékek kerülhetnek be |
+| `CHECK (value_huf >= 0)`, `CHECK (returned_at IS NULL OR returned_at >= loaned_at)` | nincs negatív érték, nincs időben fordított visszavétel |
+| `CHECK (due_at IS NULL OR due_at >= loaned_at)` | **határozatlan határidő megengedett**, de értelmetlen dátum nem |
+| idegen kulcsok `ON DELETE RESTRICT` | nem tűnhet el olyan sor, amire napló vagy kölcsönzés hivatkozik |
+
+| Index | Mire kell |
+| --- | --- |
+| `(organization_id, status)` | a „raktárban / kiadva" gyors szűrő |
+| `(organization_id, garment_type_id)`, `(organization_id, region_id)` | a típus- és tájegység-szűrő |
+| `inventory_code` (egyedi) | kód szerinti keresés – ez a leggyakoribb |
+| `pg_trgm` GIN a `notes`, `size`, `color` mezőn | részleges, **ékezet nélküli** keresés |
+| `loans (due_at) WHERE returned_at IS NULL` | a lejárt határidők listája |
+| `activity_log (organization_id, occurred_at DESC)` | napló időrendben |
+| `members (organization_id, full_name)` | tag keresése |
+
+> A mintaadat most 180 ruha, de a terv **1000+ ruhára** készül. Ezért a lista **szerveroldalon** szűr, rendez és lapoz, és egyszerre csak 25/50/100 sor jön át a hálózaton.
+
+### Egyedi azonosítók
+
+| Rész | Megoldás |
+| --- | --- |
+| Belső kulcs | `uuid` – technikai, a felületen soha nem látszik |
+| Emberi kód | `TÍPUS-SORSZÁM`, pl. `ING-0042` – ez van a címkén, a QR-kódban és a keresőben |
+| Előtag | a `garment_types.code` (pl. `ING`), típusonként **újrainduló** sorszámmal |
+| Sorszám | a `code_sequences` tábla adja **tranzakcióban, sorzárral** (`SELECT … FOR UPDATE`) – párhuzamos felvitelnél sem születik két azonos kód |
+| QR-kód tartalma | mélylink: `https://<domain>/g/ING-0042` – beolvasva egyenesen a ruha adatlapjára visz |
+
+**Miért kell mindkettő?** Mert a sorszám emberi név: kitalálható és előbb-utóbb ütközik; a UUID viszont kimondhatatlan telefonon. A kettő együtt adja a biztonságot *és* a használhatóságot.
+
+### Kiadás és visszavétel – az állapotgép
+
+```
+available ──kiadás──▶ loaned ──visszavétel (jó állapot)──▶ available
+                        │
+                        ├── visszavétel sérülten ──▶ repair ──(javítás)──▶ available
+                        └── nem kerül elő ─────────▶ lost
+```
+
+1. Egy ruhán **egyszerre egy nyitott kölcsönzés** lehet (ezt a részleges egyedi index kényszeríti ki, nem a kód).
+2. Kiadáskor rögzítjük a ruha állapotát (`condition_out`), visszavételkor a visszakapott állapotot (`condition_in`) – így utólag látszik, ki mit rontott el.
+3. **A „lejárt" nem állapot, hanem jelző:** `due_at` ki van töltve, elmúlt, és `returned_at` üres. A felület ezt jelvényként mutatja.
+4. Minden lépés bekerül a naplóba: ki, mikor, mit, milyen értékről milyenre.
 
 ## Képernyők és navigáció
 
@@ -34,8 +141,7 @@ Bejelentkezés után (AppShell: oldalsáv / mobil alsó sáv)
 ├─ /tagok                   tagok listája
 │   ├─ /tagok/uj
 │   └─ /tagok/[id]          tag adatlapja (kiadásban lévő ruhái)
-├─ /kiadas                  (november) kiadás: ruhák + tag
-├─ /visszavetel             (november) visszavétel, állapot rögzítése
+├─ /kiadas                  (november) kiadás ÉS visszavétel egy képernyőn, két fül
 ├─ /naplo                   (november) tevékenységnapló, szűrve
 ├─ /sajat                   tag: a saját kiadásaim és határidőim
 ├─ /profil                  saját adatok, jelszó, téma
@@ -62,8 +168,7 @@ Mindenki számára (bejelentkezés nélkül is működik)
 | `/ruhak/[kod]/szerkesztes` | módosítás | admin, leltáros | mint a felvétel, az azonosító nem módosítható |
 | `/tagok` | tagok | admin, leltáros | kereső, szűrő (aktív/inaktív), darabszám |
 | `/tagok/uj`, `/tagok/[id]`, `/tagok/[id]/szerkesztes` | tag kezelés | admin, leltáros (adatmódosítás: admin) | személyes adatok, **éppen nála lévő ruhák**, előzmények, deaktiválás |
-| `/kiadas` | kiadás | admin, leltáros | tag kiválasztása vagy beolvasás, **több ruha egy folyamatban**, megerősítés, határidő |
-| `/visszavetel` | visszavétel | admin, leltáros | kód beolvasása, állapot rögzítése, sérülés megjegyzéssel |
+| `/kiadas` | kiadás és visszavétel (két fül) | admin, leltáros | kiadás: tag + **több ruha egy folyamatban**, határidő (lehet határozatlan); visszavétel: kód beolvasása, állapot rögzítése, sérülés megjegyzéssel |
 | `/naplo` | tevékenységnapló | admin, leltáros | szűrés műveletre, felhasználóra, tárgyra, dátumra; előtte/utána összevetés |
 | `/sajat` | saját kiadások | tag | nálam lévő ruhák, határidő, előzmények |
 | `/beallitasok/*` | törzsadatok, felhasználók | admin | ruhatípusok, tájegységek (létrehozás, átnevezés, deaktiválás) |

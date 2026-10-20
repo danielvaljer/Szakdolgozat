@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatDate, formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { garmentsForMember, members } from "@/lib/mock/data";
+import { garmentsForMember, members } from "@/lib/mock-data";
 import { fold, type RawSearchParams } from "@/lib/query";
 
 export default async function MembersPage({

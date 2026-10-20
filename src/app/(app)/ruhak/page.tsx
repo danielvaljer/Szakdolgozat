@@ -6,7 +6,7 @@ import { IconPlus } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";
 import { formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { garments, garmentTypeName, regionName } from "@/lib/mock/data";
+import { garments, garmentTypeName, regionName } from "@/lib/mock-data";
 import {
   filterGarments,
   paginate,

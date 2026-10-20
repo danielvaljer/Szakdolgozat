@@ -1,0 +1,32 @@
+name: CI
+
+# Minden feltolásnál és javaslatnál (pull request) lefut ugyanaz a négy ellenőrzés,
+# amit helyben is futtatunk: lint, typecheck, teszt, build.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # A lock fájlból telepít: nem lehet "véletlen" verziócsere.
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

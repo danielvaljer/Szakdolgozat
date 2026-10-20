@@ -142,16 +142,6 @@ export const t = {
         "Lejárt határidők kiemelése és a ruhák aktuális státuszának követése.",
       ],
     },
-    visszavetel: {
-      title: "Visszavétel",
-      phase: "Novemberi szakasz – kiadás-visszavétel és naplózás",
-      points: [
-        "A ruha kódjának beolvasása (QR) vagy kézi beírása: mobilon ez a leggyorsabb út.",
-        "Visszavételkor a ruha állapotának rögzítése, sérülés esetén megjegyzéssel.",
-        "A ruha státusza automatikusan visszaáll kiadhatóra, és a kiadás lezárul.",
-        "A napló rögzíti, ki vette vissza és milyen állapotban.",
-      ],
-    },
     naplo: {
       title: "Napló",
       phase: "Novemberi szakasz – teljes műveleti naplózás",

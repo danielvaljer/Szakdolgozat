@@ -5,7 +5,7 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { FormRow, Input, Select, Textarea } from "@/components/ui/form";
 import { PageHeader } from "@/components/ui/page-header";
 import { t } from "@/lib/i18n/hu";
-import { allSizes, findGarment, garmentTypeName, garmentTypes, regions } from "@/lib/mock/data";
+import { allSizes, findGarment, garmentTypeName, garmentTypes, regions } from "@/lib/mock-data";
 
 export default async function EditGarmentPage({ params }: { params: Promise<{ kod: string }> }) {
   const { kod } = await params;

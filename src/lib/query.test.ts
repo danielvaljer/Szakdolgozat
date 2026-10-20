@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Garment } from "./mock/types";
+import type { Garment } from "./types";
 import {
   buildQueryString,
   defaultGarmentQuery,

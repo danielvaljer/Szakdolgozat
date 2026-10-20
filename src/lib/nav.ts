@@ -42,8 +42,8 @@ export const mobileNav: readonly NavItem[] = [
 ];
 
 export const mobileMoreNav: readonly NavItem[] = [
-  { href: "/kiadas", label: t.nav.kiadas, icon: IconSwap },
-  { href: "/visszavetel", label: t.nav.visszavetel, icon: IconSwap },
+  { href: "/kiadas", label: `${t.nav.kiadas} / ${t.nav.visszavetel}`, icon: IconSwap },
+
   { href: "/naplo", label: t.nav.naplo, icon: IconLog },
   { href: "/beallitasok/ruhatipusok", label: t.nav.beallitasok, icon: IconSettings },
 ];

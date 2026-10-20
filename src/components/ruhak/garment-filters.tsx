@@ -8,7 +8,7 @@ import { Input, Label, Select } from "@/components/ui/form";
 import { IconClose, IconSearch } from "@/components/ui/icons";
 import { formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { allSizes, garmentTypes, regions } from "@/lib/mock/data";
+import { allSizes, garmentTypes, regions } from "@/lib/mock-data";
 import {
   buildQueryString,
   hasActiveFilters,

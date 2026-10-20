@@ -8,7 +8,7 @@ import { DueDate } from "@/components/ui/due-date";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { daysUntil, formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { garmentStats, garments, recentLoans } from "@/lib/mock/data";
+import { garmentStats, garments, recentLoans } from "@/lib/mock-data";
 
 export default function DashboardPage() {
   const stats = garmentStats(garments);
@@ -103,7 +103,7 @@ export default function DashboardPage() {
               <IconSwap width={18} height={18} />
               {t.dashboard.newLoan}
             </Link>
-            <Link href="/visszavetel" className={buttonClass("secondary", "md", "justify-start")}>
+            <Link href="/kiadas" className={buttonClass("secondary", "md", "justify-start")}>
               <IconScan width={18} height={18} />
               {t.dashboard.scan}
             </Link>

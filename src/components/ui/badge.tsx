@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/components/ui/cn";
 import { daysUntil, formatDays } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import type { GarmentCondition, GarmentStatus } from "@/lib/mock/types";
+import type { GarmentCondition, GarmentStatus } from "@/lib/types";
 
 /**
  * Jelvények EGY helyen (korábban két fájl volt: badge + status-badge).

@@ -1,4 +1,4 @@
-import type { Garment } from "./mock/types";
+import type { Garment } from "./types";
 
 /**
  * A lista keresése, szűrése, rendezése, lapozása.

@@ -5,7 +5,7 @@ import { FormRow, Input, Select, Textarea } from "@/components/ui/form";
 import { IconPlus } from "@/components/ui/icons";
 import { PageHeader } from "@/components/ui/page-header";
 import { t } from "@/lib/i18n/hu";
-import { allSizes, garmentTypes, garments, regions } from "@/lib/mock/data";
+import { allSizes, garmentTypes, garments, regions } from "@/lib/mock-data";
 
 function nextCode(typeCode: string): string {
   const used = garments.filter((garment) => garment.typeCode === typeCode).length;

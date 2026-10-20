@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { findGarment, garmentTypeName, loansForGarment, regionName } from "@/lib/mock/data";
+import { findGarment, garmentTypeName, loansForGarment, regionName } from "@/lib/mock-data";
 
 function DataRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -137,9 +137,6 @@ export default async function GarmentDetailPage({
             <CardBody className="flex flex-col gap-2">
               <Link href="/kiadas" className={buttonClass("primary", "md", "justify-start")}>
                 {t.dashboard.newLoan}
-              </Link>
-              <Link href="/visszavetel" className={buttonClass("secondary", "md", "justify-start")}>
-                {t.nav.visszavetel}
               </Link>
               <Link href={`/naplo?targy=${garment.inventoryCode}`} className={buttonClass("ghost", "md", "justify-start")}>
                 {t.nav.naplo}

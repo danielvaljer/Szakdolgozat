@@ -24,7 +24,8 @@
 | A keresés/szűrés/lapozás **logikáját** | `src/lib/query.ts` (+ teszt: `src/lib/query.test.ts`) |
 | Oldalsávot, fejlécet, mobil alsó sávot | `src/components/layout/*` |
 | Új képernyőt létrehozni | új mappa a `src/app/(app)/` alatt, benne `page.tsx` |
-| Mintaadatot | `src/lib/mock/data.ts` – **ideiglenes**, az adatbázisnál törlődik |
+| Mintaadatot | `src/lib/mock-data.ts` – **ideiglenes**, az adatbázisnál törlődik |
+| A ruha/tag típusait (mezők) | `src/lib/types.ts` |
 
 ## Szavak, amiket a kódban látsz
 

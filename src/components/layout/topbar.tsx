@@ -14,7 +14,7 @@ function titleFor(pathname: string): string {
     ...primaryNav,
     ...settingsNav,
     { href: "/ruhak/uj", label: t.nav.ujRuha, icon: IconPlus },
-    { href: "/visszavetel", label: t.nav.visszavetel, icon: IconPlus },
+
     { href: "/bejelentkezes", label: t.auth.title, icon: IconPlus },
   ];
 

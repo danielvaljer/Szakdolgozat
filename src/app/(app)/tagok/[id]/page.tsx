@@ -9,7 +9,7 @@ import { DueDate } from "@/components/ui/due-date";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatDate } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { garmentsForMember, garmentTypeName, members, regionName } from "@/lib/mock/data";
+import { garmentsForMember, garmentTypeName, members, regionName } from "@/lib/mock-data";
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

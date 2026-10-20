@@ -7,8 +7,8 @@ import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n/hu";
-import { garmentTypeName, regionName } from "@/lib/mock/data";
-import type { Garment } from "@/lib/mock/types";
+import { garmentTypeName, regionName } from "@/lib/mock-data";
+import type { Garment } from "@/lib/types";
 import { buildQueryString, type GarmentQuery, type SortKey } from "@/lib/query";
 
 function SortHeader({

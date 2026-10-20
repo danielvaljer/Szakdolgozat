@@ -319,5 +319,79 @@ A fejlesztő visszajelzése: „összeszervezettebb kód kellene az átlátható
 - [ ] Adatmodell + első migrációk (Drizzle), majd a `lib/mock` törlése.
 - [ ] A `src/README.md` bővítése, ha a fejlesztőnek új kérdése merül fel – ez a fájl az ő olvasói élményéért van.
 
+---
 
+# 2026-10-14 – ESLint + CI, és az adatmodell megtervezése
+
+## 0. Fejléc
+
+| Mező | Érték |
+| --- | --- |
+| Dátum | 2026-10-14 |
+| Eszköz / modell | Cline (VS Code) + Claude |
+| Feladat típusa | eszközök (lint, CI) + tervezés (adatmodell) |
+| Eredmény | `pnpm lint` bevezetve (0 probléma), `typecheck` 0 hiba, 21/21 teszt; `docs/terv.md` adatmodell-szakasz elkészült |
+| Kapcsolódó | `eslint.config.mjs`, `.github/workflows/ci.yml`, `docs/terv.md`, `src/components/theme-toggle.tsx` |
+
+## 1. Cél
+
+Két nyitott pont lezárása: **(a)** a kész-definíció eddig teljesületlen `pnpm lint` követelménye + CI, **(b)** az októberi mérföldkő fő eleme, az **adatmodell** (a tématerv kiemelten kéri az adatmodellt és az azonosítóképzést).
+
+## 2. Amit elkészítettem
+
+| # | Mi | Hol |
+| --- | --- | --- |
+| 1 | ESLint a Next 16 modern flat konfigurációjával + két saját szabály: `any` tilos, maradék `console.log` tilos | `eslint.config.mjs` |
+| 2 | `pnpm lint` parancs | `package.json` |
+| 3 | GitHub Actions: minden feltolásnál lint + typecheck + teszt + build | `.github/workflows/ci.yml` |
+| 4 | **Adatmodell szakasz**: 10 tábla, ER-diagram, megkötések, indexek, azonosítóképzés, kiadás-visszavétel állapotgép | `docs/terv.md` |
+
+## 3. Hol tévedtem, és mit javítottam (ez a menet tanulságai)
+
+| # | Történés | Megoldás |
+| --- | --- | --- |
+| 1 | Az első ESLint-konfiguráció `FlatCompat`-tal próbálta bekötni a Next szabályait, és elhasalt („Converting circular structure to JSON") | **Elolvastam a csomag forráskódját** (`node_modules/eslint-config-next/dist/index.js`): a Next 16 már **natív flat configot** ad, ezért a `FlatCompat` eleve rossz út. A konfigurációt erre írtam át |
+| 2 | A pnpm magától beszúrt egy `unrs-resolver: set this to true or false` sort a `pnpm-workspace.yaml`-ba, ami ütközött az én sorommal → érvénytelen YAML, minden parancs elhasalt | A meglévő sort kell `true`-ra állítani, nem újat felvenni. **Ezt kommentben leírtam a fájlba**, hogy legközelebb ne kerüljön elő |
+| 3 | **Az ESLint azonnal talált egy valódi hibát a saját kódomban:** `react-hooks/set-state-in-effect` a témaváltóban (állapot szinkronizálása effekten belül) | Átírtam `useSyncExternalStore`-ra – ez a React ajánlott módja külső rendszer (`localStorage`) követésére, és hidratálási eltérést sem okoz |
+
+## 4. Hogyan ellenőriztem
+
+- `pnpm lint` → **0 probléma** (a javítás után).
+- `npx tsc --noEmit` → kilépési kód **0**.
+- `npx vitest run` → **21/21 zöld**.
+- A `docs/terv.md` szerkezetét címsorok szerint ellenőriztem (a beszúrt szakasz a helyére került).
+- **Amit nem tudtam ellenőrizni:** a CI tényleges lefutását – az csak a GitHubon, a feltolás után derül ki (a fejlesztő végzi a feltolást).
+
+## 5. Emberi döntések (a terv, amit neked kell jóváhagynod)
+
+1. `members` ≠ `profiles`: az egyesületi tag és a belépő fiók külön dolog.
+2. Minden táblán `organization_id` (több egyesület előkészítése, funkció nélkül).
+3. A „lejárt" **számított** jelző, nem tárolt állapot.
+4. A `due_at` lehet üres (határozatlan határidő) – a megkötés csak a logikátlanságot tiltja.
+5. Egy ruhán egyszerre egy nyitott kölcsönzés, **adatbázis-szintű** kényszerrel.
+
+## 6. Következő lépések
+
+- [ ] Drizzle séma + első migráció (a `docs/terv.md` adatmodellje alapján), majd a `lib/mock` törlése.
+- [ ] D-0002 (bejelentkezés és szerepkörök) és D-0003 (egyedi azonosítók) döntés-dokumentum.
+- [ ] A követelmények (felhasználói történetek) és az architektúra-szakasz a `docs/terv.md`-be.
+
+
+
+
+
+
+---
+
+# 2026-10-20 – Egyszerusites: kevesebb fajl, kevesebb hely
+
+- **Menet:** Cline (Claude) · refaktor + dokumentáció · `src/lib/*`, `src/app/(app)/visszavetel`, `src/lib/nav.ts`, `docs/terv.md`
+- **Cél:** a fejlesztő kérésére az október hatókörére szűkített, könnyebben átlátható projekt.
+- **AI szerepe:** felmérte a fájlokat (60 követett fájl), javasolta és elvégezte az alábbiakat.
+- **Változások:**
+  - `src/lib/mock/` mappa megszűnt: `mock/types.ts` → `lib/types.ts` (tartós típusok), `mock/data.ts` → `lib/mock-data.ts` (ideiglenes, adatbázisnál törlődik). Nincs már egyfájlos almappa.
+  - A `/visszavetel` helykitöltő képernyő megszűnt: a kiadás és a visszavétel egy képernyő (`/kiadas`, két fül) – egy menüpont, kevesebb fájl, kevesebb szöveg. A `terv.md` ennek megfelelően frissült.
+- **Ellenőrzés:** `tsc` 0 hiba, `eslint` 0 probléma, `vitest` 21/21, `next build` sikeres (a `.next` gyorsítótárat előtte töröltem, mert a törölt útvonalra hivatkozott).
+- **Tanulság:** útvonal törlése után a `.next` mappát is törölni kell, különben a `typecheck` hamis hibát ad.
+- **Nincs commitolva** (AGENTS.md 14. pont).
 
